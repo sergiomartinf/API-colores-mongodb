@@ -62,4 +62,4 @@ function borrarColor({id}){
     });
 }
 
-module.exports = {leerColores,crearColor,borrarColor};
+ module.exports = {leerColores,crearColor,borrarColor};
