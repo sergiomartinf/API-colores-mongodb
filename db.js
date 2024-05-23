@@ -8,7 +8,7 @@ function conectar(){
 function leerColores(){
     return new Promise(async (ok,ko) => {
         try {
-            const conexion = conectar();
+            const conexion = await conectar();
 
             let colores = await conexion.db("colores").collection("colores").find({}).toArray();
 
