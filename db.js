@@ -1,20 +1,22 @@
+require("dotenv").config();
 const { MongoClient, ObjectId } = require("mongodb");
 
-//FUNCIONES PARA LOS MIDDLEWARES
 function conectar(){
     return MongoClient.connect(process.env.URL_MONGO);
 }
 
 function leerColores(){
     return new Promise(async (ok,ko) => {
-        const conexion = conectar();
-
         try {
+            const conexion = conectar();
+
             let colores = await conexion.db("colores").collection("colores").find({}).toArray();
 
             conexion.close();
 
-            ok(colores.map({_id,r,g,b}));
+            ok(colores.map( ({_id,r,g,b}) => {
+                return {id:_id,r,g,b};
+            }));
 
         } catch (error) {
             ko({ error : "error en BBDD"});
@@ -47,11 +49,11 @@ function borrarColor({id}){
         try {
             const conexion = await conectar();
 
-            let {count} = await conexion.db("colores").collection("colores").deleteOne( { _id : new ObjectId(id) });
+            let {deletedCount} = await conexion.db("colores").collection("colores").deleteOne( { _id : new ObjectId(id) });
 
             conexion.close();
 
-            ok(count)
+            ok(deletedCount)
 
         } catch (error) {
             ko({ error : "ERROR: No se ha borrado NADA"});
@@ -60,9 +62,4 @@ function borrarColor({id}){
     });
 }
 
-//module.exports = {leerColores,crearColor,borrarColor};
-
-
-crearColor({ r : 200, g : 100, b : 50 })
-.then(x => console.log(x))
-.catch(x => console.log(x));
+module.exports = {leerColores,crearColor,borrarColor};
